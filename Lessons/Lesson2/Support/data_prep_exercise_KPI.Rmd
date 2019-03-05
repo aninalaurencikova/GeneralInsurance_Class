@@ -12,7 +12,8 @@ library(dplyr)
 library(ggplot2)
 
 # load data
-dt_KPI_raw <- read.csv("./Data/lesson2_KPI.csv")
+#dt_KPI_raw <- read.csv("./Data/lesson2_KPI.csv")
+dt_KPI_raw <- read.csv("C:/Users/laure/Desktop/Anina_github/GeneralInsurance_Class/Data/lesson2_KPI.csv")
 ```
 
 #### What type of information do we have?
@@ -28,7 +29,9 @@ For now let's assume we know what our columns mean.
 
 ##### What do the columns contain?
 > Hint: The function summary() might help you to answer this question
-
+```{r}
+summary(dt_KPI_raw)
+```
 
 #### Looking for defects in data 
 ##### Are there any missing values?
@@ -41,7 +44,7 @@ Can you generalize this process for the whole dataset?
 > Hint: Can you use any kind of loop here?
 
 ```{r}
-# your code
+dt_KPI_raw[is.na(dt_KPI_raw$Premium) & is.na(dt_KPI_raw$Losses), ]
 ```
 
 
@@ -59,7 +62,7 @@ Which vaules are not allowed for specific columns? Let's have a look at individu
 #### Correction of defects 
 ##### What is the feasible way to repair missing values? 
 ```{r}
-# your code
+dt_KPI_raw <- dt_KPI_raw %>% filter(!is.na(Premium))
 ```
 ##### What is the feasible way to repair values that don't make sense?
 ```{r}
