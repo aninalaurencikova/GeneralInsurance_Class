@@ -16,7 +16,7 @@ library(ggplot2)
 dt_KPI_raw <- read.csv("C:/Users/laure/Desktop/Anina_github/GeneralInsurance_Class/Data/lesson2_KPI.csv")
 ```
 
-#### What type of information do we have?
+#### What type of information do we have? 
 > Hint: To have a quick overview of data use glimpse() function from dplyr
 
 ```{r}
@@ -62,11 +62,11 @@ Which vaules are not allowed for specific columns? Let's have a look at individu
 #### Correction of defects 
 ##### What is the feasible way to repair missing values? 
 ```{r}
-dt_KPI_raw <- dt_KPI_raw %>% filter(!is.na(Premium))
+data <- dt_KPI_raw %>% filter_all(all_vars(!is.na(.)))
 ```
 ##### What is the feasible way to repair values that don't make sense?
 ```{r}
-# your code
+data <- data %>% mutate(Losses = if_else(Losses > 0, Losses, 0), Expenses = if_else(Expenses > 0, Expenses, 0), Premium = if_else(Premium > 0, Premium, 0))
 ```
 
 
@@ -86,7 +86,10 @@ dt_KPI_raw %>%
 
 ##### Which Unit has the lowest Expenses? 
 ```{r}
-# your code
+dt_KPI_raw %>% 
+  group_by(Unit) %>% 
+  summarize(Expenses = sum(Expenses, na.rm = TRUE)) %>% 
+  arrange((Expenses))
 ```
 
 ##### Which Business from Unit found in the previous task had the highest Expenses? 
@@ -111,7 +114,14 @@ dt_KPI_raw %>%
 
 ##### Which Unit has the lowest Expenses? 
 ```{r}
-# your code
+dt_KPI_raw %>% 
+  group_by(Unit) %>% 
+  summarize(Premium = sum(Premium, na.rm = TRUE),
+            Expenses = sum(Expenses, na.rm = TRUE),
+            Losses = sum(Losses, na.rm = TRUE)
+  ) %>% 
+  ggplot(aes(x = reorder(Unit, Expenses), y = Expenses)) + 
+  geom_col()
 ```
 
 ##### Which Business from Unit found in the previous task had the highest Expenses? 
