@@ -18,4 +18,4 @@ server <- function(input, output)
                   method = loess, se = FALSE)})
 }
 
-shinyApp(ui, server)
+shinyApp(ui, server) 
