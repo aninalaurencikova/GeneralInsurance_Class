@@ -80,10 +80,8 @@ _Now try to predict what happens with the linse using the chain ladder technique
 
 Your solution
 ```{r}
-
-
-
-
+GenIns_d <- predict(chainladder(GenIns))
+plot(GenIns_d)
 ```
 
 At the end this is all about age-to-age factors. There are many methods that calculate them, but at the end once you get them you know, how much more the claim will be in x years.
@@ -97,46 +95,102 @@ Hint2: There are 2 types of data - paid and case. Start using Paid...
 
 _YOUR SOLUTION_
 understand the data => run some simple overviews
+```{r}
+summary(dt_PaidCase)
+```
 
 create a variable => filter data and covert to triangle. then convert to cummulative to use chainladder
 
 _STEP 1: Take paid data for House business and Small claim size_
 
 ```{r}
-Paid_HH_sml <- dt_PaidCase %>% filter(...) 
+Paid_HH_sml <- dt_PaidCase %>% 
+  filter(Business == "House" & ClaimSize == "Small" & dataset_type == "PAID")
 ```
 
 _STEP 2: Now convert the standard table into a triangle_
 Hint: %>% as.triangle(...)
 
 ```{r}
-
+Paid_HH_sml <- Paid_HH_sml %>% 
+  as.triangle(origin="ay", dev="dy", value="SumOfamount")
 ```
 
 _STEP 3: Now start plotting things to see more information_
 
 ```{r}
-
+plot(Paid_HH_sml)
+plot(predict(chainladder(Paid_HH_sml)))
 ```
 
 _STEP 4: And get the aging factors and some other stat's out to see more details_
 Hint: ata(...)
 
 ```{r}
-
+ata(Paid_HH_sml)
 ```
 
 _Now repeat for all types of buiness and sizes of claims. Compare the findings..._
 
 ```{r}
+#paid data, house business, large claim size
+Paid_HH_lrg <- dt_PaidCase %>% 
+  filter(Business == "House" & ClaimSize == "Large" & dataset_type == "PAID")
+Paid_HH_lrg <- Paid_HH_lrg %>% as.triangle(Paid_HH_lrg, origin = "ay", dev = "dy", value = "SumOfamount")
+plot(Paid_HH_lrg)
+plot(predict(chainladder(Paid_HH_lrg)))
+ata(Paid_HH_lrg)
 
+#paid data, 3rd party business, small claim size
+Paid_3rd_sml <- dt_PaidCase %>% 
+  filter(Business == "3rd Party" & ClaimSize == "Small" & dataset_type == "PAID")
+Paid_3rd_sml <- Paid_3rd_sml %>% as.triangle(Paid_3rd_sml, origin = "ay", dev = "dy", value = "SumOfamount")
+plot(Paid_3rd_sml)
+plot(predict(chainladder(Paid_3rd_sml)))
+ata(Paid_3rd_sml)
+
+#paid data, 3rd party business, large claim size
+Paid_3rd_lrg <- dt_PaidCase %>% 
+  filter(Business == "3rd Party" & ClaimSize == "Large" & dataset_type == "PAID")
+Paid_3rd_lrg <- Paid_3rd_lrg %>% as.triangle(Paid_3rd_lrg, origin = "ay", dev = "dy", value = "SumOfamount")
+plot(Paid_3rd_lrg)
+plot(predict(chainladder(Paid_3rd_lrg)))
+ata(Paid_3rd_lrg)
+
+#Najvacsie rozdiely su medzi House a 3rd party business pri Small Claim Size. Naklady pri 3rd party stale rastu, avsak pri House rastu v prvych rokoch a potom zostanu takmer konstatne.
 ```
 
 _If you are now comforatble with what this does, try doing the same, but using additional information: The Case data!_
 Hint: Sum Paid and Case together to come up with the final claims estimates (the Incurred claims)
 
 ```{r}
+#house business, small claim size, paid+case
+Incur_HH_sml <- dt_PaidCase %>% filter(Business == "House" & ClaimSize == "Small") 
+Incur_HH_sml <- Incur_HH_sml %>% as.triangle(Incur_HH_sml, origin = "ay", dev = "dy", value = "SumOfamount")
+plot(Incur_HH_sml)
+plot(predict(chainladder(Incur_HH_sml)))
+ata(Incur_HH_sml)
 
+#house business, large claim size, paid+case
+Incur_HH_lrg <- dt_PaidCase %>% filter(Business == "House" & ClaimSize == "Large") 
+Incur_HH_lrg <- Incur_HH_lrg %>% as.triangle(Incur_HH_lrg, origin = "ay", dev = "dy", value = "SumOfamount")
+plot(Incur_HH_lrg)
+plot(predict(chainladder(Incur_HH_lrg)))
+ata(Incur_HH_lrg)
+
+#3rd party business, small claim size, paid+case
+Incur_3rd_sml <- dt_PaidCase %>% filter(Business == "3rd Party" & ClaimSize == "Small") 
+Incur_3rd_sml <- Incur_3rd_sml %>% as.triangle(Incur_3rd_sml, origin = "ay", dev = "dy", value = "SumOfamount")
+plot(Incur_3rd_sml)
+plot(predict(chainladder(Incur_3rd_sml)))
+ata(Incur_3rd_sml)
+
+#3rd party business, large claim size, paid+case
+Incur_3rd_lrg <- dt_PaidCase %>% filter(Business == "3rd Party" & ClaimSize == "Large") 
+Incur_3rd_lrg <- Incur_3rd_lrg %>% as.triangle(Incur_3rd_lrg, origin = "ay", dev = "dy", value = "SumOfamount")
+plot(Incur_3rd_lrg)
+plot(predict(chainladder(Incur_3rd_lrg)))
+ata(Incur_3rd_lrg)
 ```
 
 
@@ -145,11 +199,21 @@ In insurance this means how fast is the data fully developed. The age-to-age fac
 
 So hopefully by this time you know how the losses were calculated for you to use in previous class...
 
+```{r}
+#House business - cca 4  roky trva, pokial sa losses zastabilizuju a dalej sa radikalne nemenia. Pri 3rd party to trva dlhsie.
+
+#Pri House business - ak sa nieco stane, tak sa to zaplati a predpoklada sa, ze s tym nebudu spojene dalsie vyznamne naklady (preto sa naklady "zastabiluzuju"). Pri 3rd party business moze nahrada skody trvat nepomerne dlhsie.
+```
 
 #### Exercise 3
 There are a couple of different types of business in the data from previous lesson. 
 What do you think, how long are the average delays in payments? Set up a table, that will 
 _show your assumptions and commit it to your git repository._
+```{r}
+summary(dt_KPI)
+
+#netusim co dalej s tymto cvicenim
+```
 
 
 ### Discounting  losses
