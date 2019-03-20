@@ -33,7 +33,7 @@ What type of distribution it reminds you? It looks like `Gamma` or `Tweedie` (if
 To make a proper decision we would rather to run some statistical test on matching distribution, e.g. Kolmogorov-Smirnov test and similar.
 
 
-So lets try `Gamma` as a first shoot.
+So lets try `Gamma` as a first shoot. 
 ### First Model
 ```{r}
 model1 <- glm(data = dt_pol_w_claims %>% filter(Burning_Cost != 0, Burning_Cost < 100),
