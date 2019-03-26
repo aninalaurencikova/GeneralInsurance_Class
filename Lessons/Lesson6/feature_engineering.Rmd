@@ -38,6 +38,7 @@ This was the very basic glm model we fit in the last lesson.
 model1 <- glm(data = dt_pol_w_claims,
               formula = Burning_Cost ~ Veh_type2,
               family = Gamma())
+summary(model1)
 ```
 
 We trained it on full dataset, which does not go with our methodology. Lets fit it on __training__ part of data.
@@ -47,6 +48,7 @@ We trained it on full dataset, which does not go with our methodology. Lets fit 
 model1a <- glm(data = train,
               formula = Burning_Cost ~ Veh_type2,
               family = Gamma())
+summary(model1a)
 ```
 
 ```{r}
@@ -184,6 +186,7 @@ as.character(Veh_type2)
 val$Burning_Cost)
 ```
 ```{r}
+library(gridExtra)
 emblem_graph(
   dt.frm = train %>% cbind(data.frame(pred = predict(model5, train, type = "response"))),
   x_var =  "Veh_type2",
